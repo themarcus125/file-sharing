@@ -1,0 +1,26 @@
+{
+  "name": "filesharing",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "dependencies": {},
+  "devDependencies": {
+    "eslint": "^7.26.0"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "masterserver": "node packages/masterserver/index.js",
+    "fileserver": "node packages/fileserver/index.js",
+    "client": "node packages/client/index.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/themarcus125/file-sharing.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/themarcus125/file-sharing/issues"
+  },
+  "homepage": "https://github.com/themarcus125/file-sharing#readme"
+}
