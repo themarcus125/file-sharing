@@ -1,6 +1,6 @@
 const SERVICES = {
-  REQUEST_APPEND_FILE_DIRECTORIES: 'request_append_file_directories',
   APPEND_FILE_DIRECTORIES: 'append_file_directories',
+  REQUEST_RETRIEVE_FILE_DIRECTORIES: 'request_retrieve_file_directories',
   RETRIEVE_FILE_DIRECTORIES: 'retrieve_file_directories',
   DOWNLOAD_FILE: 'download_file',
 }

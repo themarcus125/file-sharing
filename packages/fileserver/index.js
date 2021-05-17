@@ -3,7 +3,8 @@ const { SERVICES, MASTERSERVER_PORT } = require('../../constants')
 const FILE_LIST = [
   {
     id: 0,
-    path: 'hello.zip'
+    path: 'hello.zip',
+    fileSize: 1156,
   }
 ]
 
@@ -14,7 +15,7 @@ const clients = net.connect({port: MASTERSERVER_PORT}, () => {
 });
 
 clients.on('data', () => {
-  clients.write(JSON.stringify(FILE_LIST))
+  // clients.write(JSON.stringify(FILE_LIST))
   // clients.end();
 });
 

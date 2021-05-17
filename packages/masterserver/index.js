@@ -1,34 +1,6 @@
-// const express = require("express");
-// const http = require("http");
-// const socketio = require("socket.io");
-// const { SERVICES } = require("../../constants")
-// const PORT = process.env.PORT || 5000;
-
-// const app = express();
-// const server = http.createServer(app);
-// const io = socketio(server);
-
-// const onAppendFileDirectories = (fileList, source) => {
-//   console.log(fileList, source)
-// }
-
-// const onRetrieveFileDirectories = (fileList, source) => {
-//   console.log(fileList, source)
-// }
-
-// io.on("connection", (socket) => {
-//   console.log("A client is connected");
-//   socket.on(SERVICES.APPEND_FILE_DIRECTORIES, onAppendFileDirectories);
-//   socket.on(SERVICES.RETRIEVE_FILE_DIRECTORIES, onRetrieveFileDirectories);
-// })
-
-// server.listen(PORT, () => {
-//   console.log(`server running at port ${PORT}`);
-// });
-
-
 const net = require('net');
-const { SERVICES, MASTERSERVER_PORT } = require('../../constants')
+const { SERVICES, MASTERSERVER_PORT } = require('../../constants');
+const { appendDirectoriesFromFileserver, getFileDirectoriesTable } = require('./files');
 const { getServerDetails, getClientInfo, onClose, onError } = require('./helpers')
 
 const MAX_CONNECTION = 10;
@@ -36,6 +8,8 @@ const SERVER_TIMEOUT = 5000000;
 const SOCKET_TIMEOUT = 1200000;
 // creates the server
 const server = net.createServer();
+
+
 
 //emitted when server closes ...not emitted until all connections closes.
 server.on('close', onClose);
@@ -45,7 +19,7 @@ server.on('connection', function (socket) {
 
   getServerDetails(server, socket);
 
-  getClientInfo(socket);
+  const { port: clientPort } = getClientInfo(socket);
 
   console.log('--------------------------------------------')
   //var no_of_connections =  server.getConnections(); // sychronous version
@@ -61,15 +35,27 @@ server.on('connection', function (socket) {
 
   socket.on('data', (data) => {
     const [service, retrievedData] = data.split('----');
+    let fileDirectoriesTable = ''
     switch (service) {
       case SERVICES.APPEND_FILE_DIRECTORIES:
-        console.log('Append ', JSON.parse(retrievedData))
+        console.log('Appending Directories from File Server with port ', clientPort);
+        appendDirectoriesFromFileserver(JSON.parse(retrievedData), clientPort);
+        break;
+      case SERVICES.REQUEST_RETRIEVE_FILE_DIRECTORIES:
+        console.log('Resolving Directories retrieve request from Client with port ', clientPort);
+        fileDirectoriesTable = getFileDirectoriesTable();
+        socket.write(`${SERVICES.RETRIEVE_FILE_DIRECTORIES}----${fileDirectoriesTable}`)
         break;
       default:
         console.log(retrievedData);
         break;
     }
   })
+
+  socket.on('drain',function(){
+    console.log('write buffer is empty now .. u can resume the writable stream');
+    socket.resume();
+  });
 
   socket.on('error', function (error) {
     console.log('Error : ' + error);

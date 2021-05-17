@@ -13,6 +13,8 @@ const getServerDetails = (server, socket) => {
   var laddr = socket.localAddress;
   console.log('Server is listening at LOCAL port ' + lport);
   console.log('Server LOCAL ip : ' + laddr);
+  return {port: port, address: ipaddr, family: family, localPost: lport, localIP: laddr}
+
 }
 
 const getClientInfo = (socket) => {
@@ -25,6 +27,7 @@ const getClientInfo = (socket) => {
   console.log('REMOTE Socket is listening at port ' + rport);
   console.log('REMOTE Socket ip : ' + raddr);
   console.log('REMOTE Socket is IP4/IP6 : ' + rfamily);
+  return {port: rport, address: raddr, family: rfamily}
 }
 
 const onClose = (e) => {
