@@ -4,9 +4,10 @@ const FileManager = require("./file-manager");
 const { EVENTS } = require("../../constants");
 
 class UdpServer {
-  constructor(host, port) {
+  constructor(host, port, fm) {
     this.host = host;
     this.port = port;
+    this.fm = fm;
     this.logger = new Logger(`${UdpServer.name}_${host}:${port}`);
     this.server = udp.createSocket("udp4");
     this.server.on("listening", this.handleListening.bind(this));
@@ -37,7 +38,7 @@ class UdpServer {
           `got request download file "${filename}" from ${info.address}:${info.port}`
         );
         try {
-          await FileManager.streamFile(filename, (chunk, percent) => {
+          await this.fm.streamFile(filename, (chunk, percent) => {
             this.emit(info, EVENTS.FILE_CHUNK, { filename, chunk, percent });
           });
           this.emit(info, EVENTS.FILE_EOF, { filename });

@@ -3,8 +3,9 @@ const Logger = require('./logger');
 const { EVENTS } = require('../../constants');
 
 class MasterServerCli {
-  constructor(host, port, logging = true) {
+  constructor(host, port, logging = true, onDataCallback = () => {}) {
     this.logger = new Logger(`${MasterServerCli.name}_${host}:${port}`)
+    this.logger.info(`${host}, ${port}`)
     this.client = net.connect({ host, port}, () => {
       logging && this.logger.info("connect to master server success");
     });
@@ -12,8 +13,9 @@ class MasterServerCli {
     this.client.on('end', () => {
       logging && this.logger.info("disconnected from server");
     });
-
-    this.on = this.client.on;
+    this.client.on('data', (data) => {
+      onDataCallback(data)
+    })
   }
 
   sendFileInfos(fileInfos) {
@@ -25,7 +27,8 @@ class MasterServerCli {
 
   requestFileInfos() {
     this.client.write(JSON.stringify({
-      event: EVENTS.REQUEST_RETRIEVE_FILE_DIRECTORIES
+      event: EVENTS.REQUEST_RETRIEVE_FILE_DIRECTORIES,
+      payload: '',
     }));
   }
 }
