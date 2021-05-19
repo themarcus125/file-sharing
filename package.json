@@ -13,7 +13,9 @@
     "test": "echo \"Error: no test specified\" && exit 1",
     "masterserver": "node packages/masterserver/index.js",
     "fileserver": "node packages/fileserver/index.js",
-    "client": "node packages/client/index.js"
+    "client": "node packages/client/index.js",
+    "fileserver:test": "NODE_ENV=test F_HOST=localhost F_PORT=1845 node packages/fileserver/index.js",
+    "client:test-download": "node packages/client/index.js download localhost 1845"
   },
   "repository": {
     "type": "git",
