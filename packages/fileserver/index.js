@@ -23,7 +23,7 @@ const config = {
 
 async function startFileServer() {
   const fm = new FileManager(config.fileServer.port);
-  if (process.env.NODE_ENV !== 'test') {
+  if (process.env.NODE_ENV === 'test') {
     const fileInfos = await fm.getFileInfos();
     const mcli = new MasterServerCli(config.masterServer.host, config.masterServer.port);
     mcli.sendFileInfos(fileInfos.map(info => ({

@@ -9,7 +9,8 @@ module.exports = class FileManager {
     const filenames = await fs.promises.readdir(folder);
     const fileInfos = [];
     for (const filename of filenames) {
-      const stats = await fs.promises.stat(filename);
+      const filePath = path.join(this.fileDirectory, filename);
+      const stats = await fs.promises.stat(filePath);
       fileInfos.push({
         size: stats.size,
         name: filename

@@ -29,22 +29,16 @@ switch (action) {
 }
 
 function list() {
-  const config = Env.extractMasterServerConfig();
-  const mcli = new MasterServerCli(config.host, config.port, false);
-
-  mcli.on("data", (data) => {
-    const { event, payload: retrievedData } = JSON.parse(data);
-    switch (event) {
-      case EVENTS.RETRIEVE_FILE_DIRECTORIES:
-        console.log("All files retrieved from Master server:");
-        console.log(retrievedData);
-        break;
-      default:
-        console.log(retrievedData);
-        break;
+  const onDataCallback = (data) => {
+    if (data) {
+      const { event, payload: retrievedData } = JSON.parse(data);
+      if (event === EVENTS.RETRIEVE_FILE_DIRECTORIES) {
+        console.log(retrievedData)
+      }
     }
-  });
-
+  }
+  const config = Env.extractMasterServerConfig();
+  const mcli = new MasterServerCli(config.host, config.port, false, onDataCallback);
   mcli.requestFileInfos();
 }
 

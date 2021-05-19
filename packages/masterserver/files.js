@@ -1,14 +1,13 @@
 const Table = require('cli-table');
 
-const FILE_DIRECTORIES = {};
+let FILE_DIRECTORIES = [];
 
-const appendDirectoriesFromFileserver = (fileList, source) => {
-  if (FILE_DIRECTORIES?.[source]) {
-    FILE_DIRECTORIES[source] = []
+const appendDirectoriesFromFileserver = (fileList) => {
+  if (fileList?.length > 0) {
+    const date = new Date()
+    const normalizedFileList = fileList.map(item => ({ ...item, createdAt: date.toLocaleString() }))
+    FILE_DIRECTORIES = [...FILE_DIRECTORIES, ...normalizedFileList]
   }
-  const date = new Date()
-  const normalizedFileList = fileList.map(item => ({ ...item, createdAt: date.toLocaleDateString() }))
-  FILE_DIRECTORIES[source] = [...normalizedFileList]
 }
 
 const getFileDirectories = () => {
@@ -20,21 +19,15 @@ const getFileDirectoriesBySource = (source) => {
 }
 
 const getFileDirectoriesTable = () => {
-  const sources = Object.keys(FILE_DIRECTORIES)
-  if (sources?.length > 0) {
-    // instantiate
-    var table = new Table({
-      head: ['Source Port', 'Path', 'Size', 'Created At']
-      , colWidths: [18, 30, 18, 30]
-    });
-    sources.forEach(source => {
-      FILE_DIRECTORIES?.[source].forEach( item => {
-        const { path = '', fileSize = '', createdAt = '' } = item
-        table.push([source, path, `${fileSize} kB`, createdAt])
-      })
-    })
-  }
-  return table.toString()
+  const table = new Table({
+    head: ['Source Host', 'Source Port', 'File', 'Size', 'Created At']
+    , colWidths: [18, 18, 30, 18, 30]
+  });
+  FILE_DIRECTORIES?.forEach((item) => {
+    const { host, port, name, size, createdAt } = item;
+    table.push([host, port, name, `${size} B`, createdAt]);
+  })
+  return table.toString();
 }
 
 module.exports = {
