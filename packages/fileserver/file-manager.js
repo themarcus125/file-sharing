@@ -2,7 +2,10 @@ const fs = require('fs');
 const path = require('path');
 
 module.exports = class FileManager {
-  static async getFileInfos(folder = 'data') {
+  constructor(port) {
+    this.fileDirectory = `data/${port}`
+  }
+  async getFileInfos(folder = this.fileDirectory) {
     const filenames = await fs.promises.readdir(folder);
     const fileInfos = [];
     for (const filename of filenames) {
@@ -15,8 +18,8 @@ module.exports = class FileManager {
     return fileInfos;
   }
 
-  static async streamFile(filename, cb) {
-    const filePath = path.join('data', filename);
+  async streamFile(filename, cb) {
+    const filePath = path.join(this.fileDirectory, filename);
     const stat = await fs.promises.stat(filePath);
     const readable = fs.createReadStream(filePath, {encoding: 'utf8', highWaterMark: 2048 });
     

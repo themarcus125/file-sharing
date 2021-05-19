@@ -22,8 +22,9 @@ const config = {
 };
 
 async function startFileServer() {
+  const fm = new FileManager(config.fileServer.port);
   if (process.env.NODE_ENV !== 'test') {
-    const fileInfos = await FileManager.getFileInfos();
+    const fileInfos = await fm.getFileInfos();
     const mcli = new MasterServerCli(config.masterServer.host, config.masterServer.port);
     mcli.sendFileInfos(fileInfos.map(info => ({
       ...info,
@@ -31,8 +32,7 @@ async function startFileServer() {
       port: config.fileServer.port
     })));
   }
-  
-  const server = new UdpServer(config.fileServer.host, config.fileServer.port);
+  const server = new UdpServer(config.fileServer.host, config.fileServer.port, fm);
   server.bind();
 }
 
