@@ -1,5 +1,5 @@
 const net = require('net');
-const { SERVICES, MASTERSERVER_PORT } = require('../../constants');
+const { EVENTS, MASTERSERVER_PORT } = require('../../constants');
 const { appendDirectoriesFromFileserver, getFileDirectoriesTable } = require('./files');
 const { getServerDetails, getClientInfo, onClose, onError } = require('./helpers')
 
@@ -34,17 +34,20 @@ server.on('connection', function (socket) {
   });
 
   socket.on('data', (data) => {
-    const [service, retrievedData] = data.split('----');
+    const {event, payload: retrievedData} = JSON.parse(data);
     let fileDirectoriesTable = ''
-    switch (service) {
-      case SERVICES.APPEND_FILE_DIRECTORIES:
+    switch (event) {
+      case EVENTS.APPEND_FILE_DIRECTORIES:
         console.log('Appending Directories from File Server with port ', clientPort);
         appendDirectoriesFromFileserver(JSON.parse(retrievedData), clientPort);
         break;
-      case SERVICES.REQUEST_RETRIEVE_FILE_DIRECTORIES:
+      case EVENTS.REQUEST_RETRIEVE_FILE_DIRECTORIES:
         console.log('Resolving Directories retrieve request from Client with port ', clientPort);
         fileDirectoriesTable = getFileDirectoriesTable();
-        socket.write(`${SERVICES.RETRIEVE_FILE_DIRECTORIES}----${fileDirectoriesTable}`)
+        socket.write(JSON.stringify({
+          event: EVENTS.RETRIEVE_FILE_DIRECTORIES,
+          payload: fileDirectoriesTable
+        }));
         break;
       default:
         console.log(retrievedData);
