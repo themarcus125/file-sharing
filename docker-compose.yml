@@ -7,15 +7,31 @@ services:
       dockerfile: ./docker/server/Dockerfile
     ports:
       - "5000:5000"
-      - "1845:1845"
+      - "1845:1845/udp"
     volumes:
       - .:/code
-  client:
+  client_01:
     # will build ./docker/client/Dockerfile
     build: 
       context: .
       dockerfile: ./docker/client/Dockerfile
+    links:
+      - "server:server"
     ports:
       - "9000:9000"
     volumes:
       - .:/code
+    depends_on:
+      - server
+  client_02:
+    build: 
+      context: .
+      dockerfile: ./docker/client/Dockerfile
+    links:
+      - "server:server"
+    ports:
+      - "9000:9000"
+    volumes:
+      - .:/code
+    depends_on:
+      - server

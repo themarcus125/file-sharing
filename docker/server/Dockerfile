@@ -18,12 +18,6 @@ RUN npm install
 # Bundle app source
 COPY . .
 
-# Expose fileserver
-# Define runtime environments 
-ENV NODE_ENV=test
-ENV F_HOST=localhost
-ENV F_PORT=1845
-
 EXPOSE 5000
-EXPOSE 1845
+EXPOSE 1845/udp
 CMD ["pm2-runtime", "server-process.yml"]

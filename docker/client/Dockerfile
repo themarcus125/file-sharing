@@ -15,5 +15,8 @@ RUN npm install
 # Bundle app source
 COPY . .
 
+ENV M_HOST=server
+ENV M_PORT=5000
+
 EXPOSE 9000
-CMD ["node", "packages/client/index.js"]
+ENTRYPOINT ["tail", "-f", "/dev/null"]
