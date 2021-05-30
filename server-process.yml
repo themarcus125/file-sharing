@@ -1,0 +1,11 @@
+apps:
+  - script: ./packages/masterserver/index.js
+    name: "masterserver"
+    watch: true
+  - script: ./packages/fileserver/index.js
+    name: "fileserver"
+    watch: true
+    env:
+      NODE_ENV: test
+      F_HOST: localhost
+      F_PORT: 1845

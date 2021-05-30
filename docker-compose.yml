@@ -1,0 +1,21 @@
+version: '3.7'
+services:
+  server:
+    # will build ./docker/server/Dockerfile
+    build: 
+      context: .
+      dockerfile: ./docker/server/Dockerfile
+    ports:
+      - "5000:5000"
+      - "1845:1845"
+    volumes:
+      - .:/code
+  client:
+    # will build ./docker/client/Dockerfile
+    build: 
+      context: .
+      dockerfile: ./docker/client/Dockerfile
+    ports:
+      - "9000:9000"
+    volumes:
+      - .:/code
